@@ -1,0 +1,4 @@
+python3 -m venv path/venv
+source venv/bin/activate
+pip install graphviz
+sudo apt install graphviz
