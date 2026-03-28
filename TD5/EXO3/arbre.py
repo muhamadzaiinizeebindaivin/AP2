@@ -16,4 +16,11 @@ class Arbre:
         self.racine.miroir_procedurale_noeud()
     
     def verif(self):
+        if self.racine is None:
+            return (True, 0, 0)
         return self.racine.verif()
+    
+    def delete(self, key):
+        if self.racine is None:
+            return False
+        self.racine = self.racine.delete(key)

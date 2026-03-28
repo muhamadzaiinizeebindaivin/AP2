@@ -11,7 +11,6 @@ class Noeud:
             pere.fils[1] = self.fils[0].mirroir_fonctionnelle_noeud()
         return pere
             
-
     def miroir_procedurale_noeud(self):
         fils_gauche = self.fils[0]
         fils_droit = self.fils[1]
@@ -48,3 +47,23 @@ class Noeud:
         max_val = self.valeur if self.fils[1] is None else max_droite
             
         return (est_abr, min_val, max_val)
+            
+    def delete(self, key):
+        if key < self.valeur:
+            if self.fils[0] is not None:
+                self.fils[0] = self.fils[0].delete(key)
+        elif key > self.valeur:
+            if self.fils[1] is not None:
+                self.fils[1] = self.fils[1].delete(key)
+        else:
+            if self.fils[0] is None and self.fils[1] is None:
+                return None
+            elif self.fils[0] is None:
+                return self.fils[1]
+            elif self.fils[1] is None:
+                return self.fils[0]
+            else:
+                max_gauche = self.fils[0].verif()[2]
+                self.fils[0] = self.fils[0].delete(max_gauche)
+                self.valeur = max_gauche
+        return self
