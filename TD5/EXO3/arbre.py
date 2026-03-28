@@ -24,3 +24,9 @@ class Arbre:
         if self.racine is None:
             return False
         self.racine = self.racine.delete(key)
+        
+    def iterate(self, min, max):
+        print(self.racine.iterate(min, max))
+        for elem in self.racine.iterate(min, max):
+            print(elem)
+        print("hello")

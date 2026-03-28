@@ -67,3 +67,31 @@ class Noeud:
                 self.fils[0] = self.fils[0].delete(max_gauche)
                 self.valeur = max_gauche
         return self
+    # min = 2, max = 8
+    def iterate_sans_ordre(self, min, max):
+        if self.valeur >= min and self.valeur <= max:
+            yield self.valeur
+            if self.fils[0] is not None:
+                yield from self.fils[0].iterate(min, max)
+            if self.fils[1] is not None:
+                yield from self.fils[1].iterate(min, max) if self.fils[1] is not None else None
+        elif min > self.valeur and self.fils[1] is not None:
+            yield from self.fils[1].iterate(min, max)
+        elif max < self.valeur and self.fils[0] is not None:
+            yield from self.fils[0].iterate(min, max)
+        return
+            
+    # min = 2, max = 8
+    def iterate(self, min, max):
+        if max < self.valeur:
+            if self.fils[0] is not None:
+                yield from self.fils[0].iterate(min, max)
+        elif min > self.valeur:
+            if self.fils[1] is not None:
+                yield from self.fils[1].iterate(min, max)
+        elif self.valeur >= min and self.valeur <= max:
+            if self.fils[0] is not None:
+                yield from self.fils[0].iterate(min, max)
+            yield self.valeur
+            if self.fils[1] is not None:
+                yield from self.fils[1].iterate(min, max)

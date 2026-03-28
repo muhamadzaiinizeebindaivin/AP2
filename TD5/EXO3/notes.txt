@@ -1,3 +1,116 @@
 Un ABR (ARBRE BINAIRE DE RECHERCHE) est un arbre binaire où pour chaque nœud, tous les éléments 
  - du sous-arbre gauche sont strictement inférieurs à sa valeur, et 
  - tous les éléments du sous-arbre droit sont strictement supérieurs.
+ 
+-----------------------------------------------------
+QUESTION 1 : Algorithme delete(self, key)
+-----------------------------------------------------
+
+La suppression dans un ABR distingue 3 cas selon le nombre d'enfants du noeud à supprimer.
+
+CAS 1 - Le noeud est une feuille (pas d'enfants) :
+    → On retourne None, le parent perd le lien vers ce noeud.
+
+CAS 2 - Le noeud a un seul enfant :
+    → On retourne directement cet enfant, qui remplace le noeud supprimé.
+
+CAS 3 - Le noeud a deux enfants :
+    → On cherche le maximum du sous-arbre gauche (max_gauche).
+    → On copie cette valeur dans le noeud courant.
+    → On supprime max_gauche du sous-arbre gauche (ce noeud a au plus un enfant).
+
+Pseudo-code :
+
+    delete(self, key) :
+        si key < self.valeur :
+            si fils gauche existe :
+                fils gauche = fils gauche.delete(key)
+        sinon si key > self.valeur :
+            si fils droit existe :
+                fils droit = fils droit.delete(key)
+        sinon :  # key == self.valeur, noeud trouvé
+            si pas d'enfants :
+                retourner None                        # Cas 1
+            sinon si pas de fils gauche :
+                retourner fils droit                  # Cas 2
+            sinon si pas de fils droit :
+                retourner fils gauche                 # Cas 2
+            sinon :
+                max_gauche = max du sous-arbre gauche # Cas 3
+                fils gauche = fils gauche.delete(max_gauche)
+                self.valeur = max_gauche
+        retourner self
+
+Code Python :
+
+    def delete(self, key):
+        if key < self.valeur:
+            if self.fils[0] is not None:
+                self.fils[0] = self.fils[0].delete(key)
+        elif key > self.valeur:
+            if self.fils[1] is not None:
+                self.fils[1] = self.fils[1].delete(key)
+        else:
+            if self.fils[0] is None and self.fils[1] is None:
+                return None
+            elif self.fils[0] is None:
+                return self.fils[1]
+            elif self.fils[1] is None:
+                return self.fils[0]
+            else:
+                max_gauche = self.fils[0].verif()[2]
+                self.fils[0] = self.fils[0].delete(max_gauche)
+                self.valeur = max_gauche
+        return self
+
+-----------------------------------------------------
+QUESTION 3 : Coût de la primitive Delete en fonction de n
+-----------------------------------------------------
+
+Le coût de delete dépend uniquement de la hauteur h de l'arbre,
+car on descend l'arbre une fois pour trouver le noeud (O(h)),
+et une fois pour trouver max_gauche (O(h)).
+La suppression elle-même (échange de valeurs, mise à jour des liens) est O(1).
+
+Coût total = 2 × O(h) = O(h)
+
+La hauteur h dépend de la forme de l'arbre :
+
+MEILLEUR CAS - Arbre équilibré :
+    Exemple avec n = 7 noeuds :
+            4
+           / \
+          2   6
+         / \ / \
+        1  3 5  7
+    
+    À chaque niveau, on élimine la moitié des noeuds restants.
+    Donc h = log₂(n).
+    
+    → Coût = O(log n)
+
+PIRE CAS - Arbre dégénéré (filiforme) :
+    Exemple avec n = 7 noeuds :
+        1
+         \
+          2
+           \
+            3
+             \
+              4  ...
+    
+    À chaque étape, on élimine seulement 1 noeud.
+    Donc h = n.
+    
+    → Coût = O(n)
+
+RÉSUMÉ :
+
+    +----------------+----------+--------+---------+
+    | Cas            | Forme    | h      | Coût    |
+    +----------------+----------+--------+---------+
+    | Meilleur cas   | Équilibré| log(n) | O(log n)|
+    | Pire cas       | Filiforme| n      | O(n)    |
+    +----------------+----------+--------+---------+
+
+=====================================================
