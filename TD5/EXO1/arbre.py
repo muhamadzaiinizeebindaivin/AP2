@@ -14,3 +14,6 @@ class Arbre:
         if self.racine is None:
             return self
         self.racine.miroir_procedurale_noeud()
+    
+    def verif(self):
+        return self.racine.verif()

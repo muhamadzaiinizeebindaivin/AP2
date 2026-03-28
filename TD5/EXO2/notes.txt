@@ -1,0 +1,3 @@
+Plateau - l´état du jeu à un instant T
+coups() - liste des actions possibles pour le joueur courant
+joue_coup(coup) - applique l'action et retourne le plateau pour l'autre joueur

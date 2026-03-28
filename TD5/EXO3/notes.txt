@@ -1,0 +1,3 @@
+Un ABR (ARBRE BINAIRE DE RECHERCHE) est un arbre binaire où pour chaque nœud, tous les éléments 
+ - du sous-arbre gauche sont strictement inférieurs à sa valeur, et 
+ - tous les éléments du sous-arbre droit sont strictement supérieurs.
