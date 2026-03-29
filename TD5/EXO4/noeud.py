@@ -67,7 +67,7 @@ class Noeud:
                 self.fils[0] = self.fils[0].delete(max_gauche)
                 self.valeur = max_gauche
         return self
-    # min = 2, max = 8
+
     def iterate_sans_ordre(self, min, max):
         if self.valeur >= min and self.valeur <= max:
             yield self.valeur

@@ -1,1 +1,109 @@
 1. Un abre binaire -> un noeud peut avoir au plus 2 enfants
+
+=====================================================
+  Image Miroir d'un Arbre Binaire : Questions 1 et 2
+=====================================================
+
+-----------------------------------------------------
+QUESTION 1 : Algorithme miroir
+-----------------------------------------------------
+
+L'idée est simple : pour chaque noeud, on échange le fils gauche
+et le fils droit, et on fait de même récursivement pour chaque sous-arbre.
+
+Exemple :
+        5                5
+       / \      →       / \
+      2   8            8   2
+     / \              / \
+    1   3            3   1
+
+
+VERSION FONCTIONNELLE (renvoie une copie) :
+-------------------------------------------
+On crée un nouveau noeud avec la même valeur, mais on échange
+les fils gauche et droit en appelant récursivement la fonction.
+L'arbre original n'est pas modifié.
+
+Code Python :
+
+    def mirroir_fonctionnelle_noeud(self):
+        pere = Noeud(self.valeur)
+        if self.fils[1] is not None:
+            pere.fils[0] = self.fils[1].mirroir_fonctionnelle_noeud()
+        if self.fils[0] is not None:
+            pere.fils[1] = self.fils[0].mirroir_fonctionnelle_noeud()
+        return pere
+
+    def mirroir_fonctionnelle(self):          # dans Arbre
+        if self.racine is None:
+            return Arbre()
+        racine = self.racine.mirroir_fonctionnelle_noeud()
+        nouveau_arbre = Arbre()
+        nouveau_arbre.racine = racine
+        return nouveau_arbre
+
+
+VERSION PROCÉDURALE (modifie en place) :
+-----------------------------------------
+On échange directement les fils gauche et droit de chaque noeud,
+sans créer de nouveaux noeuds. L'arbre original est modifié.
+
+Code Python :
+
+    def miroir_procedurale_noeud(self):
+        fils_gauche = self.fils[0]
+        fils_droit = self.fils[1]
+
+        self.fils[0], self.fils[1] = fils_droit, fils_gauche
+        if fils_gauche is not None:
+            fils_gauche.miroir_procedurale_noeud()
+        if fils_droit is not None:
+            fils_droit.miroir_procedurale_noeud()
+
+    def mirroir_procedurale(self):            # dans Arbre
+        if self.racine is None:
+            return self
+        self.racine.miroir_procedurale_noeud()
+
+
+-----------------------------------------------------
+QUESTION 2 : Coût en nombre d'affectations
+-----------------------------------------------------
+
+Dans les deux versions, on visite CHAQUE noeud exactement une fois
+et on effectue un nombre constant d'affectations par noeud.
+
+VERSION FONCTIONNELLE :
+    Pour chaque noeud, on effectue :
+    - 1 affectation pour créer le nouveau noeud     (pere = Noeud(...))
+    - 1 affectation pour le fils gauche              (pere.fils[0] = ...)
+    - 1 affectation pour le fils droit               (pere.fils[1] = ...)
+    = 3 affectations par noeud
+
+    Coût total = 3n affectations = O(n)
+
+VERSION PROCÉDURALE :
+    Pour chaque noeud, on effectue :
+    - 1 affectation pour sauvegarder fils gauche     (fils_gauche = ...)
+    - 1 affectation pour sauvegarder fils droit      (fils_droit = ...)
+    - 1 affectation pour échanger fils[0] et fils[1] (swap)
+    = 3 affectations par noeud
+
+    Coût total = 3n affectations = O(n)
+
+RÉSUMÉ :
+
+    +------------------+----------------------+--------+
+    | Version          | Affectations         | Coût   |
+    +------------------+----------------------+--------+
+    | Fonctionnelle    | 3n                   | O(n)   |
+    | Procédurale      | 3n                   | O(n)   |
+    +------------------+----------------------+--------+
+
+Les deux versions ont le même coût en affectations O(n).
+La différence est en mémoire :
+    - Fonctionnelle : O(n) mémoire supplémentaire (nouveaux noeuds)
+    - Procédurale   : O(1) mémoire supplémentaire (modifications en place)
+
+=====================================================

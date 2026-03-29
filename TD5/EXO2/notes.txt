@@ -1,3 +1,117 @@
 Plateau - l´état du jeu à un instant T
 coups() - liste des actions possibles pour le joueur courant
 joue_coup(coup) - applique l'action et retourne le plateau pour l'autre joueur
+
+DFS - Depth First Search (Parcours en profondeur)
+BFS - Breadth First Search (Parcours en largeur)
+
+=====================================================
+  Optimisation avec coupes : DFS vs BFS
+=====================================================
+
+-----------------------------------------------------
+CONCEPT : C'est quoi une coupe ?
+-----------------------------------------------------
+
+Une coupe consiste à éviter d'explorer un sous-arbre qu'on a déjà visité.
+Si un plateau a déjà été rencontré, on "coupe" sa branche — pas besoin
+d'explorer ses enfants puisqu'on les a déjà traités.
+
+Pour détecter les doublons, on utilise un set "deja_visites" qui stocke
+tous les plateaux déjà rencontrés. Un set est utilisé (plutôt qu'une liste)
+car la recherche est en O(1) au lieu de O(n).
+
+Important : pour que les plateaux soient comparables dans un set, la classe
+Plateau doit implémenter __eq__ et __hash__ :
+
+    def __eq__(self, other):
+        return self.compteur == other.compteur
+
+    def __hash__(self):
+        return hash(self.compteur)
+
+-----------------------------------------------------
+VERSION 1 : Parcours en profondeur (DFS)
+-----------------------------------------------------
+
+On utilise une pile (list avec pop()) — on descend jusqu'aux feuilles
+avant d'explorer les autres branches.
+
+Code Python :
+
+    def iterateur_plateau_sans_doublons_dfs(plateau, s):
+        deja_visites = {plateau}
+        a_voir = [(plateau, s)]
+        while a_voir:
+            plateau_a_traiter, s = a_voir.pop()
+            if s == 0:
+                yield plateau_a_traiter
+            else:
+                for coup in plateau_a_traiter.coups():
+                    nouveau_plateau = plateau_a_traiter.joue_coup(coup)
+                    if nouveau_plateau not in deja_visites:
+                        deja_visites.add(nouveau_plateau)
+                        a_voir.append((nouveau_plateau, s-1))
+
+-----------------------------------------------------
+VERSION 2 : Parcours en largeur (BFS)
+-----------------------------------------------------
+
+On utilise une file (deque avec popleft()) — on explore niveau par niveau
+avant de descendre plus profond.
+
+Code Python :
+
+    def iterateur_plateau_sans_doublons_bfs(plateau, s):
+        deja_visites = {plateau}
+        a_voir = deque([(plateau, s)])
+        while a_voir:
+            plateau_a_traiter, s = a_voir.popleft()
+            if s == 0:
+                yield plateau_a_traiter
+            else:
+                for coup in plateau_a_traiter.coups():
+                    nouveau_plateau = plateau_a_traiter.joue_coup(coup)
+                    if nouveau_plateau not in deja_visites:
+                        deja_visites.add(nouveau_plateau)
+                        a_voir.append((nouveau_plateau, s-1))
+
+La seule différence avec DFS : popleft() au lieu de pop().
+
+-----------------------------------------------------
+COMMENT LA DETECTION DES DOUBLONS CHANGE-T-ELLE ?
+-----------------------------------------------------
+
+DFS (profondeur) :
+    - Descend jusqu'aux feuilles avant d'explorer les autres branches
+    - Un doublon peut être découvert TARD — après avoir déjà exploré
+      tout un sous-arbre inutilement
+    - Exemple :
+            A
+           / \
+          B   C
+         / \
+        D   B   ← doublon détecté tard, après avoir exploré D
+               / \
+              ...   ← sous-arbre exploré inutilement
+
+BFS (largeur) :
+    - Explore niveau par niveau avant de descendre
+    - Un doublon est détecté DÈS qu'il apparaît au même niveau,
+      avant d'explorer ses enfants
+    - Exemple :
+            A          (niveau 0)
+           / \
+          B   C        (niveau 1)
+         / \ / \
+        D  B ...       (niveau 2) ← doublon B détecté ici,
+                                    ses enfants ne sont jamais ajoutés
+
+CONCLUSION :
+    - Les deux versions donnent le même NOMBRE de plateaux distincts
+    - Mais BFS détecte les doublons PLUS TÔT → évite d'explorer
+      des sous-arbres entiers inutilement → plus efficace en pratique
+    - DFS utilise moins de mémoire (pile plus petite)
+    - BFS utilise plus de mémoire (file peut contenir tout un niveau)
+
+=====================================================
