@@ -1,0 +1,1 @@
+Un max-tas (ou max-heap) est une structure de données en arbre binaire qui respecte une propriété simple : chaque nœud est toujours supérieur ou égal à ses enfants.
